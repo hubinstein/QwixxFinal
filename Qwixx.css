@@ -1,0 +1,66 @@
+.red-row, .penalty{
+  background-color:rgb(255,0,0);
+  }
+.red-row-end{
+  background-color:rgb(255,0,0);
+  opacity:0.5;
+}
+.yellow-row{
+  background-color:rgb(255,255,0);
+}
+.yellow-row-end{
+  background-color:rgb(255,255,0);
+  opacity:0.5;
+}
+.green-row{
+  background-color:rgb(0,255,0);
+}
+.green-row-end{
+  background-color:rgb(0,255,0);
+  opacity:0.5;
+}
+.blue-row{
+  background-color:rgb(0,0,255);
+}
+.blue-row-end{
+  background-color:rgb(0,0,255);
+  opacity:0.5;
+}
+.red-row, .blue-row,.green-row, .red-row-end, .blue-row-end,.green-row-end, .red-die, .green-die, .blue-die, .roller, .penalty{
+color:rgb(255,255,255);
+}
+.board {
+    display:grid;
+    grid-template-columns: 40px repeat(11, 1fr);
+    grid-template-rows: repeat(4, 40px);
+    height:66%;
+}
+ .red-die, .yellow-die, .green-die, .blue-die, .white-die, .roller{
+  height:40px;
+  width:40px;
+  margin-top:10px;
+}
+.red-die {
+  background-color:red;
+}
+.blue-die {
+  background-color:blue;
+}
+.green-die {
+  background-color:green;
+}
+.yellow-die {
+  background-color:yellow;
+}
+.white-die {
+  background-color:white;
+}
+.roller {
+  background-color:black;
+  width:60px;
+}
+.penalty {
+  height:40px;
+  width:100px;
+  margin-top:10px;
+}
