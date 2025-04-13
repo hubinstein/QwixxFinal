@@ -301,12 +301,18 @@ function listenWhite(whiteThatDidIt){
     }
   }
 }
+function pressWhite(){
+  listenWhite('white');
+}
+function pressWhite2(){
+  listenWhite('white2');
+}
 let roller = document.getElementById('roller');
-roller.addEventListener('click', roll);
-dice.white.addEventListener('click', ()=> {listenWhite('white');});
-dice.white2.addEventListener('click', () => {listenWhite('white2');});
 let penalizer=document.getElementById('penalty')
-penalizer.addEventListener('click', penalize)
+roller.addEventListener('click', roll);
+dice.white.addEventListener('click', pressWhite);
+dice.white2.addEventListener('click', pressWhite2);
+penalizer.addEventListener('click', penalize);
 function endGame(){
   let redCount = parseInt(document.getElementById('redXCount').innerText);
   redCount=redCount*(redCount+1)/2;
@@ -320,6 +326,10 @@ function endGame(){
   let score=redCount+yellowCount+blueCount+greenCount+penalty;
   let scoreText = document.getElementById('score');
   scoreText.innerText = `Game ended, FINAL SCORE: ${score}`;
+  roller.removeEventListener('click', roll);
+  dice.white.removeEventListener('click', pressWhite);
+  dice.white2.removeEventListener('click', pressWhite2);
+  penalizer.removeEventListener('click', penalize);
 }
 function penalize(){
   let penaltyAmount = penalizer.innerText.slice(-3);
@@ -330,7 +340,6 @@ function penalize(){
     reset();
     removeListeners();
     roll();
-
     return
   }
   reset();
