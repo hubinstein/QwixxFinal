@@ -31,6 +31,7 @@ let locks = {
   number:0
 }
 function mark(color1, number){
+  console.log(`marking ${color1} ${number}`);
   let i = 0;
   if (color1==='green'){
     number = 12-number+2;
@@ -40,7 +41,7 @@ function mark(color1, number){
     let element = document.getElementById('greenXCount');
     let xCount = element.innerText[0];
     if (number===12){
-      if (xCount==='5'){
+      if (parseInt(xCount)>=5){
         xCount++;
         locks.number++;
         if (locks.number===2){
@@ -71,7 +72,7 @@ function mark(color1, number){
     let element = document.getElementById('blueXCount');
     let xCount = element.innerText[0];
     if (number===12){
-      if (xCount==='5'){
+      if (parseInt(xCount)>=5){
         xCount++;
         locks.number++;
         locks.blue=true;
@@ -97,7 +98,7 @@ function mark(color1, number){
     let element = document.getElementById('redXCount');
     let xCount = element.innerText[0];
     if (number===12){
-      if (xCount==='5'){
+      if (parseInt(xCount)>=5){
         xCount++;
         locks.number++;
         locks.red=true;
@@ -121,7 +122,7 @@ function mark(color1, number){
     let element = document.getElementById('yellowXCount');
     let xCount = element.innerText[0];
     if (number===12){
-      if (xCount==='5'){
+      if (parseInt(xCount)>=5){
         xCount++;
         locks.number++;
         locks.yellow=true;
@@ -150,11 +151,13 @@ function mark(color1, number){
     }
     }
 function reset(){
+  console.log('resetting turn');
   hasNotRolled = true;
   choiceNotPlayed = true;
   tutorial.innerText = 'click roll';
 }
 function removeListeners(){
+  console.log('removing listeners');
   dice.red.removeEventListener('click', redMark, {once:true});
   dice.yellow.removeEventListener('click', yellowMark, {once:true});
   dice.green.removeEventListener('click', greenMark, {once:true});
@@ -171,23 +174,23 @@ function removeListeners(){
   dice.blue.removeEventListener('click', blueChoiceMark, {once:true});
 }
 function redChoiceMark() {
-  mark('red', parseInt(dice.white.innerText)+parseInt(dice.white2.innerText))
+  mark('red', parseInt(dice.white.innerText)+parseInt(dice.white2.innerText));
   removeListeners();
   tutorial.innerText ='select a white die, take a penalty to roll, or if you have made a move, you can roll without penalty';
 
 }
 function yellowChoiceMark(){
-  if (mark('yellow', parseInt(dice.white.innerText)+parseInt(dice.white2.innerText))!='failed'){
-    removeListeners();
-  }
+  mark('yellow', parseInt(dice.white.innerText)+parseInt(dice.white2.innerText));
+  removeListeners();
+  tutorial.innerText ='select a white die, take a penalty to roll, or if you have made a move, you can roll without penalty';
 }
 function blueChoiceMark(){
-  mark('blue', parseInt(dice.white.innerText)+parseInt(dice.white2.innerText))
+  mark('blue', parseInt(dice.white.innerText)+parseInt(dice.white2.innerText));
   removeListeners();
   tutorial.innerText ='select a white die, take a penalty to roll, or if you have made a move, you can roll without penalty';
 }
 function greenChoiceMark(){
-  mark('green', parseInt(dice.white.innerText)+parseInt(dice.white2.innerText))
+  mark('green', parseInt(dice.white.innerText)+parseInt(dice.white2.innerText));
   removeListeners();
   tutorial.innerText ='select a white die, take a penalty to roll, or if you have made a move, you can roll without penalty';
 }
@@ -272,20 +275,26 @@ function blueMark2(){
   }
 }
 function choiceMark(){
+  removeListeners();
+  console.log('checking if choice mark has been played');
   if (choiceNotPlayed){
+    console.log('it hasn\'t');
     choiceNotPlayed=false;
-    removeListeners();
     tutorial.innerText='click a color';
     dice.red.addEventListener('click', redChoiceMark, {once:true});
     dice.yellow.addEventListener('click', yellowChoiceMark, {once:true});
     dice.green.addEventListener('click', greenChoiceMark, {once:true});
     dice.blue.addEventListener('click', blueChoiceMark, {once:true});
   }
+  else{
+    console.log('it has');
+  }
 }
 function listenWhite(whiteThatDidIt){
   if (!hasNotRolled){
     tutorial.innerText='click another one of the dice';
     if (whiteThatDidIt==='white'){;
+      console.log('dice white1 pressed');
       dice.red.addEventListener('click', redMark, {once:true});
       dice.yellow.addEventListener('click', yellowMark, {once:true});
       dice.green.addEventListener('click', greenMark, {once:true});
@@ -293,6 +302,7 @@ function listenWhite(whiteThatDidIt){
       dice.white2.addEventListener('click',choiceMark, {once:true});
   }
     else {
+      console.log('dice white2 pressed');
       dice.red.addEventListener('click', redMark2, {once:true});
       dice.yellow.addEventListener('click', yellowMark2, {once:true});
       dice.green.addEventListener('click', greenMark2, {once:true});
