@@ -102,6 +102,13 @@ function updateGame(){
     .catch((error) => {
       console.log('%c ERROR:', 'background: red', error); // The write  failed...
     });
+  let i = 0;
+  while(i<44){
+    Object.entries(board_list)[i][1].style.opacity='1';
+    i++;
+  }
+  document.getElementById('score').innerHTML = '';
+  tutorial.style.display="block";
   updateBoard();
 }
 /* ------------------------ */
