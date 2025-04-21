@@ -2,7 +2,7 @@
 <html>
   <head>
     <title> Qwixx </title>
-    <link rel="stylesheet" href="Qwixx.css">
+    <link rel="stylesheet" href="Qwixx.css?r=1">
   </head>
   <body>
     <div class="board">
@@ -145,9 +145,9 @@
 
       </div>
       <button id='penalty' class="penalty">
-        Penalty: -0
+        Penalty: 0
       </button> 
-      <button id='roller' class="roller">
+      <button id='turn-ender' class="turn-ender">
         ROLL
       </button>
       <button id="red-die" class="red-die">0</button>
@@ -155,11 +155,12 @@
       <button id="green-die" class="green-die">0</button>
       <button id="blue-die" class="blue-die">0</button>
       <button id="white-die" class="white-die">0</button>
-      <button id="white-die2" class="white-die">0</button>
+      <button id="white-die2" class="white-die2">0</button>
+      <button onClick="window.newGame();">NEW GAME</button>
       <p id="score" class="score" style="display: inline-block;">
       </p>
       <p id="tutorial">click roll</p>
-      <script src="Qwixx.js"></script>
+      <script src="Qwixx.js" type="module"></script>
   </body>
 </html>
 
