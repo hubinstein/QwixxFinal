@@ -26,7 +26,7 @@
   background-color:rgb(0,0,255);
   opacity:0.5;
 }
-.red-row, .blue-row,.green-row, .red-row-end, .blue-row-end,.green-row-end, .red-die, .green-die, .blue-die, .roller, .penalty{
+.red-row, .blue-row,.green-row, .red-row-end, .blue-row-end,.green-row-end, .red-die, .green-die, .blue-die, .penalty, .turn-ender{
 color:rgb(255,255,255);
 }
 .board {
@@ -35,7 +35,7 @@ color:rgb(255,255,255);
     grid-template-rows: repeat(4, 40px);
     height:66%;
 }
- .red-die, .yellow-die, .green-die, .blue-die, .white-die, .roller{
+ .red-die, .yellow-die, .green-die, .blue-die, .white-die, .white-die2{
   height:40px;
   width:40px;
   margin-top:10px;
@@ -52,12 +52,15 @@ color:rgb(255,255,255);
 .yellow-die {
   background-color:yellow;
 }
-.white-die {
+.white-die, .white-die2 {
   background-color:white;
 }
-.roller {
+.turn-ender {
   background-color:black;
-  width:60px;
+  padding-left: 10px;
+  padding-right: 10px;
+  margin-top:10px;
+  height:40px;
 }
 .penalty {
   height:40px;
