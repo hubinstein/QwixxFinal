@@ -35,7 +35,7 @@ color:rgb(255,255,255);
     grid-template-rows: repeat(4, 40px);
     height:66%;
 }
- .red-die, .yellow-die, .green-die, .blue-die, .white-die, .white-die2{
+ .red-die, .yellow-die, .green-die, .blue-die, .white-die1, .white-die2{
   height:40px;
   width:40px;
   margin-top:10px;
@@ -52,7 +52,7 @@ color:rgb(255,255,255);
 .yellow-die {
   background-color:yellow;
 }
-.white-die, .white-die2 {
+.white-die1, .white-die2 {
   background-color:white;
 }
 .turn-ender {
