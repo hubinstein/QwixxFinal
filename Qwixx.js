@@ -21,35 +21,24 @@ const app = initializeApp(firebaseConfig);
 
 // Initialize Realtime Database and get a reference to the service
 const database = getDatabase(app);
+let allButtons={
+  red: document.getElementById("red-die"),
+  yellow: document.getElementById("yellow-die"),
+  blue: document.getElementById("blue-die"),
+  green: document.getElementById("green-die"),
+  white1: document.getElementById("white-die1"),
+  white2: document.getElementById("white-die2"),
+  roller: document.getElementById('turn-ender'),
+  penalizer: document.getElementById('penalty')
 
-/* ------------------------- TEST DATA WRITE ------------------------- 
-let player1Location = ref(database, 'players/')
-let data = {
-  player:'ben'
 }
-
-set(databaseLocation, data)
-  .then(() => {
-    console.log('%c SUCCESS', 'background: green'); // Data saved successfully!
-  })
-  .catch((error) => {
-    console.log('%c ERROR:', 'background: red', error); // The write failed...
-  });
-/*
-/* ========================== /FIREBASE ========================== */
-
 let gameObject = {};
 onValue(ref(database, `games/test`), (snapshot) => {
   const data = snapshot.val();
   gameObject=data;
   updateBoard();
-  init();
 });
 window.newGame = () => {
-  roller.addEventListener('click', roll);
-  dice.white.addEventListener('click', pressWhite);
-  dice.white2.addEventListener('click', pressWhite2);
-  penalizer.addEventListener('click', penalize);
   gameObject = {
     id:'test',
     gameEnded:false,
@@ -91,7 +80,7 @@ window.newGame = () => {
       yellow: 0,
       green: 0,
       blue: 0,
-      white: 0,
+      white1: 0,
       white2: 0
     },
     gameState:{
@@ -116,15 +105,7 @@ function updateGame(){
   updateBoard();
 }
 /* ------------------------ */
-
 let tutorial = document.getElementById('tutorial');
-let dice = {
-  red: document.getElementById("red-die"),
-  yellow: document.getElementById("yellow-die"),
-  blue: document.getElementById("blue-die"),
-  green: document.getElementById("green-die"),
-  white: document.getElementById("white-die"),
-  white2: document.getElementById("white-die2")};
 let board_list = {
     red2: document.getElementById('red-row2'),
     red3: document.getElementById('red-row3'),
@@ -172,8 +153,7 @@ let board_list = {
     blue12: document.getElementById('blue-row12')}
 
 function updateBoard(){
-  penalizer.innerText=`Penalty: ${gameObject.player1.penalty}`;
-  //-------------UPDATING BOARD------------
+  allButtons.penalizer.innerText=`Penalty: ${gameObject.player1.penalty}`;
   for(let i=0; i<colors.length; i++){
     let color = colors[i];
     document.getElementById(color+'XCount').innerText=gameObject.player1.board[color].xCount;
@@ -193,41 +173,39 @@ function updateBoard(){
     document.getElementById('score').innerText = `Game ended, FINAL SCORE: ${gameObject.player1.score}`;
     tutorial.style.display="none";
   }
-  //----------------UPDATING DICE-------
-  dice.red.innerText = gameObject.dice.red.toString();
-  dice.yellow.innerText = gameObject.dice.yellow.toString();
-  dice.green.innerText = gameObject.dice.green.toString();
-  dice.blue.innerText = gameObject.dice.blue.toString();
-  dice.white.innerText = gameObject.dice.white.toString();
-  dice.white2.innerText = gameObject.dice.white2.toString();
-  //---------------UPDATING TUTORIAL-------------
+  allButtons.red.innerText = gameObject.dice.red.toString();
+  allButtons.yellow.innerText = gameObject.dice.yellow.toString();
+  allButtons.green.innerText = gameObject.dice.green.toString();
+  allButtons.blue.innerText = gameObject.dice.blue.toString();
+  allButtons.white1.innerText = gameObject.dice.white1.toString();
+  allButtons.white2.innerText = gameObject.dice.white2.toString();
   if (gameObject.gameState.choiceStarted){
-    tutorial.innerText='click a color(one of the dice), you can also unclick your last click';
+    tutorial.innerText='click a color(one of the dice)';
   }
   else if (gameObject.gameState.hasNotRolled){
     tutorial.innerText='click roll';
   }
   else if (gameObject.gameState.whichWhitePressed){
-    tutorial.innerText='click another dice, you can also unclick your last click';
+    tutorial.innerText='click another dice';
   }
   else{
     tutorial.innerText='select a white die, take a penalty to roll, or if you have made a move, you can roll without penalty';
   }
   //-------------UPDATING DICE BORDERS-------------
-  dice.white.style.borderColor='black';
-  dice.white2.style.borderColor='black';
+  allButtons.white1.style.borderColor='black';
+  allButtons.white2.style.borderColor='black';
   if (!gameObject.gameState.hasNotRolled){
-    if (gameObject.gameState.whichWhitePressed==='white'){
-      dice.white.style.borderColor='red';
-      dice.white2.style.borderColor='black';
+    if (gameObject.gameState.whichWhitePressed==='white1'){
+      allButtons.white1.style.borderColor='red';
+      allButtons.white2.style.borderColor='black';
     }
     else if (gameObject.gameState.whichWhitePressed==='white2'){
-      dice.white2.style.borderColor='red';
-      dice.white.style.borderColor='black';
+      allButtons.white2.style.borderColor='red';
+      allButtons.white1.style.borderColor='black';
     }
     if (gameObject.gameState.choiceStarted){
-      dice.white.style.borderColor='red';
-      dice.white2.style.borderColor='red';
+      allButtons.white1.style.borderColor='red';
+      allButtons.white2.style.borderColor='red';
     }
   }
   //-----------------------------------------------
@@ -235,16 +213,79 @@ function updateBoard(){
 
 
 let colors = ['red','green','blue','yellow'] // ENUM
-
-
+function diePressed(color){
+  if (!gameObject.gameEnded&&!gameObject.gameState.hasNotRolled){
+    let otherWhite='';
+    console.log(color, ' pressed');
+    if (color==='white1'){
+      otherWhite='white2';
+    }
+    else if (color==='white2'){
+      otherWhite='white1';
+    }
+    //----setting the other white----
+    //--------------WHITE DIE STUFF --------------
+    if (otherWhite){
+      //------Trying to play choice or switch to other non-choice--------
+      if (gameObject.gameState.whichWhitePressed===otherWhite){
+        //------------playing choice---------
+        if (gameObject.gameState.choiceNotPlayed){
+          gameObject.gameState.whichWhitePressed=null;
+          gameObject.gameState.choiceStarted=true;
+        }
+        //-------switching choice to non-choice------
+        else{
+          gameObject.gameState.whichWhitePressed=color;
+        } 
+      }
+      //---------------Trying to play non-choice or undo choice----------
+      else if (!gameObject.gameState.whichWhitePressed){
+        if(gameObject.gameState.choiceStarted){
+          gameObject.gameState.choiceStarted=false;
+          gameObject.gameState.whichWhitePressed=otherWhite;
+        }
+        //--------------playing non-choice---------
+        else {
+          gameObject.gameState.whichWhitePressed=color;
+        }
+      }
+      //--------------------trying to undo non-choice-------------
+      else{
+        gameObject.gameState.whichWhitePressed=null;
+      }
+    }
+    //--------------COLOR STUFF --------------
+    else{
+      //-----------choice--------------
+      if(gameObject.gameState.choiceStarted){
+        if (mark(color, gameObject.dice.white1+gameObject.dice.white2)!='failed'){
+          gameObject.gameState.choiceNotPlayed=false;
+          gameObject.gameState.choiceStarted=false;
+        }
+        else{
+        }
+      }
+      //---------non-choice--------
+      else if (gameObject.gameState.whichWhitePressed){
+        if (mark(color, gameObject.dice[color]+gameObject.dice[gameObject.gameState.whichWhitePressed])!='failed'){
+          gameObject.gameState.whichWhitePressed=null;
+          gameObject.gameState.hasNotRolled=true;
+        }
+        else{
+        }
+      }
+    } 
+  }  
+  updateGame();
+}
 function roll(){
-  if (gameObject.gameState.hasNotRolled||!gameObject.gameState.choiceNotPlayed){
+  if (!gameObject.gameEnded&&(gameObject.gameState.hasNotRolled||!gameObject.gameState.choiceNotPlayed)){
     console.log('rolling');
     gameObject.dice.red = Math.round(Math.random()*6+0.5);
     gameObject.dice.yellow = Math.round(Math.random()*6+0.5);
     gameObject.dice.green = Math.round(Math.random()*6+0.5);
     gameObject.dice.blue = Math.round(Math.random()*6+0.5);
-    gameObject.dice.white = Math.round(Math.random()*6+0.5);
+    gameObject.dice.white1 = Math.round(Math.random()*6+0.5);
     gameObject.dice.white2 = Math.round(Math.random()*6+0.5);
    
     /*------------------------------------------*/
@@ -256,60 +297,18 @@ function roll(){
     alert('You can\'t roll again until next turn')
   }
   }
-let roller = document.getElementById('turn-ender');
-roller.addEventListener('click', roll);
 function penalize(){
-  gameObject.player1.penalty-=5;
-  updateGame();
-  if (gameObject.player1.penalty===-20){
-    endGame();
-    reset();
-    removeListeners();
-    return;
-  }
-  reset();
-  removeListeners();
-  roll();
-
-}
-function undoWhite(){
-  removeListeners();
-  gameObject.gameState.whichWhitePressed=null;
-  updateGame();
-}
-let penalizer=document.getElementById('penalty');
-penalizer.addEventListener('click', penalize);
-function whitePressed(whiteThatDidIt){
-  if (!gameObject.gameState.hasNotRolled){
-    gameObject.gameState.whichWhitePressed=whiteThatDidIt;
-    updateGame();
-    if (whiteThatDidIt==='white'){;
-      console.log('dice white1 pressed');
-      dice.red.addEventListener('click', redMark, {once:true});
-      dice.yellow.addEventListener('click', yellowMark, {once:true});
-      dice.green.addEventListener('click', greenMark, {once:true});
-      dice.blue.addEventListener('click', blueMark, {once:true});
-      dice.white2.addEventListener('click',choiceMarkStart, {once:true});
-      dice.white.addEventListener('click',undoWhite, {once:true});
-  }
-    else {
-      console.log('dice white2 pressed');
-      dice.red.addEventListener('click', redMark2, {once:true});
-      dice.yellow.addEventListener('click', yellowMark2, {once:true});
-      dice.green.addEventListener('click', greenMark2, {once:true});
-      dice.blue.addEventListener('click',blueMark2, {once:true});
-      dice.white.addEventListener('click', choiceMarkStart, {once:true});
-      dice.white2.addEventListener('click',undoWhite, {once:true});
+  if (!gameObject.gameEnded){
+    gameObject.player1.penalty-=5;
+    if (gameObject.player1.penalty===-20){
+      endGame();
+      reset();
+      return;
     }
+    reset();
+    updateGame();
   }
 }
-var pressWhite=whitePressed.bind(null, 'white');
-var pressWhite2=whitePressed.bind(null, 'white2');
-dice.white.addEventListener('click', pressWhite);
-dice.white2.addEventListener('click', pressWhite2);
-
-/* ------------------------------------------------ */
-
 window.mark = function (color1, number){
   console.log(`marking ${color1} ${number}`);
   if (color1==='green'||color1==='blue'){
@@ -354,83 +353,8 @@ function reset(){
   gameObject.gameState.choiceStarted = false;
   gameObject.gameState.whichWhitePressed = null;
   updateGame();
-}
-function removeListeners(){
-  console.log('removing listeners');
-  dice.red.removeEventListener('click', redMark, {once:true});
-  dice.yellow.removeEventListener('click', yellowMark, {once:true});
-  dice.green.removeEventListener('click', greenMark, {once:true});
-  dice.blue.removeEventListener('click', blueMark, {once:true});
-  dice.white2.removeEventListener('click', choiceMarkStart, {once:true});
-  dice.red.removeEventListener('click', redMark2, {once:true});
-  dice.yellow.removeEventListener('click', yellowMark2, {once:true});
-  dice.green.removeEventListener('click', greenMark2, {once:true});
-  dice.blue.removeEventListener('click', blueMark2, {once:true});
-  dice.white.removeEventListener('click', choiceMarkStart, {once:true});
-  dice.red.removeEventListener('click', redChoiceMark, {once:true});
-  dice.yellow.removeEventListener('click', yellowChoiceMark, {once:true});
-  dice.green.removeEventListener('click', greenChoiceMark, {once:true});
-  dice.blue.removeEventListener('click', blueChoiceMark, {once:true});
-  dice.white.removeEventListener('click',undoWhite, {once:true});
-  dice.white2.removeEventListener('click',undoWhite, {once:true});
-}
-// CHOICE MARKS:
-function choiceMarkStart(){
-  removeListeners();
-  console.log('checking if choice mark has been played');
-  updateGame();
-  if (gameObject.gameState.choiceNotPlayed){
-    gameObject.gameState.choiceStarted = true;
-    gameObject.gameState.whichWhitePressed = null;
-    console.log('it hasn\'t');
-    dice.red.addEventListener('click', redChoiceMark, {once:true});
-    dice.yellow.addEventListener('click', yellowChoiceMark, {once:true});
-    dice.green.addEventListener('click', greenChoiceMark, {once:true});
-    dice.blue.addEventListener('click', blueChoiceMark, {once:true});
-    updateGame();
-  }
-  else{
-    console.log('it has');
-  }
-}
-function choiceMarkEnd(color){
-  if (mark(color, parseInt(dice.white.innerText)+parseInt(dice.white2.innerText))==='failed'){
-    alert(`you can\'t do that`);
-  }
-  else{
-    removeListeners();
-    gameObject.gameState.choiceStarted = false;
-    gameObject.gameState.choiceNotPlayed = false;
-  }
-  updateGame();
-}
-var redChoiceMark=choiceMarkEnd.bind(null, 'red');
-var greenChoiceMark=choiceMarkEnd.bind(null, 'green');
-var blueChoiceMark=choiceMarkEnd.bind(null, 'blue');
-var yellowChoiceMark=choiceMarkEnd.bind(null, 'yellow');
-//  NON-CHOICE MARKS:
-function nonChoiceMarks(color, white){
-  if (mark(color, parseInt(dice[white].innerText)+parseInt(dice[color].innerText))!='failed'){
-    reset();
-    removeListeners();
-  }
-  else{
-    alert(`you can\'t do that`);
-  }
-  updateGame();
-}
-var redMark=nonChoiceMarks.bind(null, 'red', 'white');
-var yellowMark=nonChoiceMarks.bind(null, 'yellow', 'white');
-var greenMark=nonChoiceMarks.bind(null, 'green', 'white');
-var blueMark=nonChoiceMarks.bind(null, 'blue', 'white');
-var redMark2=nonChoiceMarks.bind(null, 'red', 'white2');
-var yellowMark2=nonChoiceMarks.bind(null, 'yellow', 'white2');
-var greenMark2=nonChoiceMarks.bind(null, 'green', 'white2');
-var blueMark2=nonChoiceMarks.bind(null, 'blue', 'white2');
 
-
-
-
+}
 function endGame(){
   let redCount = gameObject.player1.board.red.xCount;
   redCount=redCount*(redCount+1)/2;
@@ -444,20 +368,17 @@ function endGame(){
   gameObject.player1.score = redCount+yellowCount+blueCount+greenCount+penalty;
   gameObject.gameEnded = true;
   updateGame();
-  roller.removeEventListener('click', roll);
-  dice.white.removeEventListener('click', pressWhite);
-  dice.white2.removeEventListener('click', pressWhite2);
-  penalizer.removeEventListener('click', penalize);
   console.log('%c gameObject.player1.board:', 'background: red; color: #fff; font-size: 16px; font-weight: bold', gameObject.player1);
   console.log('%c gameObject.locks:', 'background: red; color: #fff; font-size: 16px; font-weight: bold', gameObject.locks);
 }
 function init(){
-  if (!gameObject.gameState.hasNotRolled){
-    if (gameObject.gameState.whichWhitePressed){
-      whitePressed(gameObject.gameState.whichWhitePressed);
-    }
-    if (gameObject.gameState.choiceStarted){
-      choiceMarkStart();
-    }
-  }
+  allButtons.red.addEventListener('click', diePressed.bind(null, 'red'));
+  allButtons.yellow.addEventListener('click', diePressed.bind(null, 'yellow'));
+  allButtons.green.addEventListener('click', diePressed.bind(null, 'green'));
+  allButtons.blue.addEventListener('click', diePressed.bind(null, 'blue'));
+  allButtons.penalizer.addEventListener('click', penalize);
+  allButtons.roller.addEventListener('click', roll);
+  allButtons.white1.addEventListener('click', diePressed.bind(null, 'white1'));
+  allButtons.white2.addEventListener('click', diePressed.bind(null, 'white2'));
 }
+init();
