@@ -95,12 +95,13 @@ window.newGame = () => {
     Object.entries(board_list)[i][1].style.opacity='1';
     i++;
   }
-  board_list[red12].style.opacity='0.5';
-  board_list[yellow12].style.opacity='0.5';
-  board_list[green12].style.opacity='0.5';
-  board_list[blue12].style.opacity='0.5';
+  Object.entries(board_list)[10][1].style.opacity='0.5';
+  Object.entries(board_list)[21][1].style.opacity='0.5';
+  Object.entries(board_list)[32][1].style.opacity='0.5';
+  Object.entries(board_list)[43][1].style.opacity='0.5';
   document.getElementById('score').innerHTML = '';
   tutorial.style.display="block";
+  reset();
   updateGame();
 }
 function updateGame(){
@@ -274,7 +275,7 @@ function diePressed(color){
           gameObject.gameState.choiceStarted=false;
         }
         else{
-          alert('you can\'t do that');
+          alert('you can\'t do that')
         }
       }
       //---------non-choice--------
@@ -284,7 +285,6 @@ function diePressed(color){
           gameObject.gameState.hasNotRolled=true;
         }
         else{
-          alert('you can\'t do that');
         }
       }
     } 
@@ -394,5 +394,5 @@ function init(){
   allButtons.white1.addEventListener('click', diePressed.bind(null, 'white1'));
   allButtons.white2.addEventListener('click', diePressed.bind(null, 'white2'));
 }
-setInterval(updateGame(), 1000);
+setInterval(updateGame, 100);
 init();
