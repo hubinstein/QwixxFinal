@@ -90,6 +90,17 @@ window.newGame = () => {
       whichWhitePressed:null
     }
   }
+  let i = 0;
+  while(i<44){
+    Object.entries(board_list)[i][1].style.opacity='1';
+    i++;
+  }
+  board_list[red12].style.opacity='0.5';
+  board_list[yellow12].style.opacity='0.5';
+  board_list[green12].style.opacity='0.5';
+  board_list[blue12].style.opacity='0.5';
+  document.getElementById('score').innerHTML = '';
+  tutorial.style.display="block";
   updateGame();
 }
 function updateGame(){
@@ -102,13 +113,6 @@ function updateGame(){
     .catch((error) => {
       console.log('%c ERROR:', 'background: red', error); // The write  failed...
     });
-  let i = 0;
-  while(i<44){
-    Object.entries(board_list)[i][1].style.opacity='1';
-    i++;
-  }
-  document.getElementById('score').innerHTML = '';
-  tutorial.style.display="block";
   updateBoard();
 }
 /* ------------------------ */
@@ -270,6 +274,7 @@ function diePressed(color){
           gameObject.gameState.choiceStarted=false;
         }
         else{
+          alert('you can\'t do that');
         }
       }
       //---------non-choice--------
@@ -279,6 +284,7 @@ function diePressed(color){
           gameObject.gameState.hasNotRolled=true;
         }
         else{
+          alert('you can\'t do that');
         }
       }
     } 
@@ -388,4 +394,5 @@ function init(){
   allButtons.white1.addEventListener('click', diePressed.bind(null, 'white1'));
   allButtons.white2.addEventListener('click', diePressed.bind(null, 'white2'));
 }
+setInterval(updateGame(), 1000);
 init();
