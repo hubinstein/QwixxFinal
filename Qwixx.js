@@ -38,13 +38,17 @@ onValue(ref(database, `games/test`), (snapshot) => {
   gameObject=data;
   updateBoard();
 });
+let computerName='test1';
+window.player2 = () => {
+  computerName='test2';
+}
 window.newGame = () => {
   gameObject = {
     id:'test',
     gameEnded:false,
     player1: {
       user: {
-        name:'',
+        name:'test1',
       },
       board: {
         red: {
@@ -67,7 +71,31 @@ window.newGame = () => {
       penalty: 0,
       score: 0,
     },
-    player2: {},
+    player2: {
+      user: {
+        name:'test2',
+      },
+      board: {
+        red: {
+          highestMarked: 0,
+          xCount: 0,
+        },
+        blue: {
+          highestMarked: 0,
+          xCount: 0,
+        },
+        green: {
+          highestMarked: 0,
+          xCount: 0,
+        },
+        yellow: {
+          highestMarked: 0,
+          xCount: 0,
+        }
+      },
+      penalty: 0,
+      score: 0,
+    },
     locks: {
       red:false,
       yellow:false,
@@ -100,6 +128,15 @@ window.newGame = () => {
   Object.entries(board_list)[32][1].style.opacity='0.5';
   Object.entries(board_list)[43][1].style.opacity='0.5';
   document.getElementById('score').innerHTML = '';
+  while(i<44){
+    Object.entries(board_list2)[i][1].style.opacity='1';
+    i++;
+  }
+  Object.entries(board_list2)[10][1].style.opacity='0.5';
+  Object.entries(board_list2)[21][1].style.opacity='0.5';
+  Object.entries(board_list2)[32][1].style.opacity='0.5';
+  Object.entries(board_list2)[43][1].style.opacity='0.5';
+  document.getElementById('score2').innerHTML = '';
   tutorial.style.display="block";
   reset();
   updateGame();
@@ -118,53 +155,29 @@ function updateGame(){
 }
 /* ------------------------ */
 let tutorial = document.getElementById('tutorial');
-let board_list = {
-    red2: document.getElementById('red-row2'),
-    red3: document.getElementById('red-row3'),
-    red4: document.getElementById('red-row4'),
-    red5: document.getElementById('red-row5'),
-    red6: document.getElementById('red-row6'),
-    red7: document.getElementById('red-row7'),
-    red8: document.getElementById('red-row8'),
-    red9: document.getElementById('red-row9'),
-    red10: document.getElementById('red-row10'),
-    red11: document.getElementById('red-row11'),
-    red12: document.getElementById('red-row12'),
-    yellow2: document.getElementById('yellow-row2'),
-    yellow3: document.getElementById('yellow-row3'),
-    yellow4: document.getElementById('yellow-row4'),
-    yellow5: document.getElementById('yellow-row5'),
-    yellow6: document.getElementById('yellow-row6'),
-    yellow7: document.getElementById('yellow-row7'),
-    yellow8: document.getElementById('yellow-row8'),
-    yellow9: document.getElementById('yellow-row9'),
-    yellow10: document.getElementById('yellow-row10'),
-    yellow11: document.getElementById('yellow-row11'),
-    yellow12: document.getElementById('yellow-row12'),
-    green2: document.getElementById('green-row2'), //green and blue 2 refers to green and blue 12 because I'm lazy
-    green3: document.getElementById('green-row3'),
-    green4: document.getElementById('green-row4'),
-    green5: document.getElementById('green-row5'),
-    green6: document.getElementById('green-row6'),
-    green7: document.getElementById('green-row7'),
-    green8: document.getElementById('green-row8'),
-    green9: document.getElementById('green-row9'),
-    green10: document.getElementById('green-row10'),
-    green11: document.getElementById('green-row11'),
-    green12: document.getElementById('green-row12'),
-    blue2: document.getElementById('blue-row2'),
-    blue3: document.getElementById('blue-row3'),
-    blue4: document.getElementById('blue-row4'),
-    blue5: document.getElementById('blue-row5'),
-    blue6: document.getElementById('blue-row6'),
-    blue7: document.getElementById('blue-row7'),
-    blue8: document.getElementById('blue-row8'),
-    blue9: document.getElementById('blue-row9'),
-    blue10: document.getElementById('blue-row10'),
-    blue11: document.getElementById('blue-row11'),
-    blue12: document.getElementById('blue-row12')}
+let colors = ['red','green','blue','yellow']; // ENUM
+let board_list = {};
+let board_list2 = {};
+for (let i=0; i<4; i++){
+  let color=colors[i];
+  let offSet=33;
+  if (color==='red'){
+    offSet=0;
+  }
+  else if (color==='yellow'){
+    offSet=11;
+  }
+  else if (color==='green'){
+    offSet=22;
+  }
+  for (let j=2; j<13; j++){
+    board_list[offSet+j-2]=document.getElementById(color+'-row'+j);
+    board_list2[offSet+j-2]=document.getElementById(color+'-row'+j+'-2');
+  }
+}
 
 function updateBoard(){
+  let colors = ['red','green','blue','yellow'];
   allButtons.penalizer.innerText=`Penalty: ${gameObject.player1.penalty}`;
   for(let i=0; i<colors.length; i++){
     let color = colors[i];
@@ -177,7 +190,7 @@ function updateBoard(){
       else if (color==='blue'){Object.entries(board_list)[j+33][1].style.opacity=0;}
       j++;
     }
-    if (gameObject.player1.board[color].xCount===5){
+    if (gameObject.player1.board[color].xCount>=5){
       board_list[color+'12'].style.opacity = '1';
     }
   }
@@ -222,9 +235,6 @@ function updateBoard(){
   }
   //-----------------------------------------------
 }
-
-
-let colors = ['red','green','blue','yellow'] // ENUM
 function diePressed(color){
   if (!gameObject.gameEnded&&!gameObject.gameState.hasNotRolled){
     let otherWhite='';
